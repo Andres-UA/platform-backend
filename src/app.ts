@@ -4,6 +4,7 @@ import morgan from 'morgan';
 // Import routes
 import authRoutes from './routes/auth';
 import postRoutes from './routes/posts';
+import serviceRoutes from './routes/service';
 
 const app = express();
 
@@ -17,5 +18,6 @@ app.use(express.json());
 // routes
 app.use('/auth', authRoutes);
 app.use('/api/post', postRoutes);
+app.use('/api/service', serviceRoutes);
 
 export default app;
