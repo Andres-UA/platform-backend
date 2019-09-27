@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import authRoutes from './routes/auth';
 import postRoutes from './routes/posts';
 import serviceRoutes from './routes/service';
+import bcService from './routes/bc.service';
 
 const app = express();
 
@@ -19,5 +20,6 @@ app.use(express.json());
 app.use('/auth', authRoutes);
 app.use('/api/post', postRoutes);
 app.use('/api/service', serviceRoutes);
+app.use('/service', bcService);
 
 export default app;

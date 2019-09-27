@@ -7,7 +7,7 @@ import { registerValidation, loginValidation } from '../utils/validation';
 
 export async function register(req: Request, res: Response): Promise<Response> {
   const { error } = registerValidation(req.body);
-
+  console.log(req.body);
   if (error) {
     const message = error.details[0].message;
     return res.status(400).send(message);
