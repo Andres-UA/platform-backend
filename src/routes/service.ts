@@ -11,7 +11,7 @@ import {
   user,
   query,
   invoke,
-} from '../controllers/blockchain_service.controller';
+} from '../controllers/bc.service.controller';
 
 const router = Router();
 

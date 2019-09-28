@@ -22,8 +22,8 @@ const serviceSchema = new Schema(
   { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
 );
 
-interface IService extends Document {
-  readonly name: string;
+export interface IService extends Document {
+  name: string;
   description: string;
   model_schema: string;
 }

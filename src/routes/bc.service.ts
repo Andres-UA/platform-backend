@@ -5,7 +5,7 @@ import {
   show,
   index,
   update,
-} from '../controllers/blockchain_service.controller';
+} from '../controllers/bc.service.controller';
 
 const router = Router();
 
