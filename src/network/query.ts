@@ -1,7 +1,15 @@
 import { FileSystemWallet, Gateway } from "fabric-network";
 import * as path from "path";
 
-const ccpPath = path.resolve(__dirname, "..", "config", "connection-org1.json");
+const ccpPath = path.resolve(
+  __dirname,
+  '..',
+  '..',
+  '..',
+  'platform-network',
+  'first-network',
+  'connection-org1.json',
+);
 
 export async function queryBC() {
   try {

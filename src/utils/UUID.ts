@@ -8,7 +8,7 @@ function getRandomInt(min: number, max: number) {
 export default function generate() {
   let ts = timestamp.toString();
   let parts = ts.split('').reverse();
-  let id = '_';
+  let id = '';
 
   for (let i = 0; i < length; ++i) {
     let index = getRandomInt(0, parts.length - 1);
