@@ -191,4 +191,4 @@ zsdoc/data
 # Typescript
 dist
 
-# End of https://www.gitignore.io/api/zsh,node,linux,windows,visualstudiocode,archlinuxpackages
+wallet/

@@ -1,6 +1,12 @@
 import { Router } from 'express';
-import { store, index, show, update, destroy } from '../controllers/service.controller';
-import { admin, user, query, invoke } from '../controllers/bc.service.controller';
+import {
+  store,
+  index,
+  show,
+  update,
+  destroy,
+} from '../controllers/service.controller';
+import { admin, user } from '../controllers/bc.service.controller';
 
 const router = Router();
 
@@ -12,7 +18,5 @@ router.post('/destroy', destroy);
 
 router.post('/enrroladmin', admin);
 router.post('/registeruser', user);
-router.post('/query', query);
-router.post('/invoke', invoke);
 
 export default router;

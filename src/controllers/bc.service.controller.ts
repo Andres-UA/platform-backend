@@ -7,7 +7,12 @@ import Service from '../models/Service';
 import generate from '../utils/UUID';
 
 import { Types } from 'mongoose';
-import { createModelTransaction, queryTransaction, updateTransaction } from '../utils/transaction';
+import {
+  createModelTransaction,
+  getModelTransaction,
+  updateTransaction,
+  getModelsTransaction,
+} from '../utils/transaction';
 
 export async function admin(req: Request, res: Response): Promise<Response> {
   await enrollAdmin();
@@ -19,20 +24,10 @@ export async function user(req: Request, res: Response): Promise<Response> {
   return res.status(200).send('usuario registrado');
 }
 
-export async function query(req: Request, res: Response): Promise<Response> {
-  await queryBC();
-  return res.status(200).send('');
-}
-
-export async function invoke(req: Request, res: Response): Promise<Response> {
-  await invokeBC();
-  return res.status(200).send('');
-}
-
 export async function store(req: Request, res: Response): Promise<Response> {
   const serviceId = req.params.id_service;
 
-  if (!Types.ObjectId.isValid(serviceId)) { 
+  if (!Types.ObjectId.isValid(serviceId)) {
     return res.status(400).send('Identificador de servicio invalido.');
   }
 
@@ -63,14 +58,13 @@ export async function store(req: Request, res: Response): Promise<Response> {
       if (transaction.success) {
         return res.status(200).json({
           success: true,
-          message: 'Transaccion enviada, id:' + uuid
+          message: 'Transaccion enviada, id:' + uuid,
         });
       } else {
-        return res
-          .status(200).json({
-            success: true,
-            message: 'Transaccion no enviada, error:' + transaction.message
-          });
+        return res.status(200).json({
+          success: true,
+          message: 'Transaccion no enviada, error:' + transaction.message,
+        });
       }
     } else {
       return res.status(400).send('El servicio no existe.');
@@ -81,19 +75,40 @@ export async function store(req: Request, res: Response): Promise<Response> {
 }
 
 export async function index(req: Request, res: Response): Promise<Response> {
+  const serviceId = req.params.id_service;
+
+  if (serviceId) {
+    let transaction: any = await getModelsTransaction(serviceId);
+    if (transaction.success) {
+      const model: any = JSON.parse(transaction.model);
+      const data = model.data;
+      const id = model.srvId;
+      return res.status(200).json({
+        id,
+        ...data,
+      });
+    } else {
+      return res
+        .status(200)
+        .send('Transaccion no enviada, error: ' + transaction.message);
+    }
+  }
+
   return res.status(200).send('');
 }
 
 export async function show(req: Request, res: Response): Promise<Response> {
-  const serviceId = req.params.id_service;
   const documentId = req.params.id_model;
 
   if (documentId) {
-    let transaction: any = await queryTransaction(documentId);
+    let transaction: any = await getModelTransaction(documentId);
     if (transaction.success) {
-      const model: object = JSON.parse(transaction.model);
+      const model: any = JSON.parse(transaction.model);
+      const data = model.data;
+      const id = model.srvId;
       return res.status(200).json({
-        
+        id,
+        ...data,
       });
     } else {
       return res
@@ -107,6 +122,7 @@ export async function show(req: Request, res: Response): Promise<Response> {
 
 export async function update(req: Request, res: Response): Promise<Response> {
   const serviceId = req.params.id_service;
+  const documentId = req.params.id_model;
 
   if (!Types.ObjectId.isValid(serviceId)) {
     return res.status(400).send('Identificador de servicio invalido.');
@@ -130,14 +146,12 @@ export async function update(req: Request, res: Response): Promise<Response> {
         let name = fieldNames[key];
         data[name] = req.body[name];
       }
-      let uuid = generate();
       let transaction: any = await updateTransaction(
-        serviceId,
-        uuid,
+        documentId,
         JSON.stringify(data),
       );
       if (transaction.success) {
-        return res.status(200).send('Transaccion enviada, id:' + uuid);
+        return res.status(200).send('Transaccion enviada');
       } else {
         return res
           .status(200)
