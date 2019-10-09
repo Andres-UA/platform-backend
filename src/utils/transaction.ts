@@ -48,8 +48,6 @@ export async function createModelTransaction(
     await gateway.disconnect();
     return { success: true, message: 'Transaction has been submitted' };
   } catch (error) {
-    console.error(`Failed to submit transaction: ${error}`);
-    process.exit(1);
     return {
       success: false,
       message: `Failed to submit transaction: ${error}`,
@@ -61,7 +59,6 @@ export async function getModelTransaction(docId: string) {
   try {
     const walletPath = path.join(process.cwd(), 'wallet');
     const wallet = new FileSystemWallet(walletPath);
-    console.log(`Wallet path: ${walletPath}`);
 
     const userExists = await wallet.exists('user1');
     if (!userExists) {
@@ -87,8 +84,10 @@ export async function getModelTransaction(docId: string) {
       model: result.toString(),
     };
   } catch (error) {
-    console.error(`Failed to evaluate transaction: ${error}`);
-    process.exit(1);
+    return {
+      success: false,
+      error: `Failed to evaluate transaction: ${error.message}`,
+    };
   }
 }
 
@@ -127,8 +126,10 @@ export async function getModelsTransaction(serviceId: string) {
       model: result.toString(),
     };
   } catch (error) {
-    console.error(`Failed to evaluate transaction: ${error}`);
-    process.exit(1);
+    return {
+      success: false,
+      error: `Failed to evaluate transaction: ${error.message}`,
+    };
   }
 }
 
@@ -160,8 +161,6 @@ export async function updateTransaction(documentId: string, data: string) {
     await gateway.disconnect();
     return { success: true, message: 'Transaction has been submitted' };
   } catch (error) {
-    console.error(`Failed to submit transaction: ${error}`);
-    process.exit(1);
     return {
       success: false,
       message: `Failed to submit transaction: ${error}`,
