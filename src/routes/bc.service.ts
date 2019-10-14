@@ -9,9 +9,9 @@ import {
 
 const router = Router();
 
-router.post('/:id_service', store);
-router.get('/:id_service/', index);
-router.get('/:id_service/:id_model', show); 
-router.put('/:id_service/:id_model', update);
+router.post('/:id_service/:type_component/:name_component', store);
+router.get('/:id_service/:type_component/:name_component', index);
+router.get('/:id_service/:type_component/:name_component/:id_model', show); 
+router.put('/:id_service/:type_component/:name_component/:id_model', update);
 
 export default router;

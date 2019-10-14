@@ -1,4 +1,4 @@
-import { Schema, Document, model } from "mongoose";
+import { Schema, Document, model } from 'mongoose';
 
 const serviceSchema = new Schema(
   {
@@ -14,18 +14,23 @@ const serviceSchema = new Schema(
       min: 6,
       max: 255
     },
-    model_schema: {
+    participants: {
       type: Object,
-      required: true,
+      required: true
+    },
+    assets: {
+      type: Object,
+      required: true
     }
   },
-  { timestamps: { createdAt: "created_at", updatedAt: "updated_at" } }
+  { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }
 );
 
 export interface IService extends Document {
   name: string;
   description: string;
-  model_schema: string;
+  participants: string;
+  assets: string;
 }
 
-export default model<IService>("Service", serviceSchema);
+export default model<IService>('Service', serviceSchema);

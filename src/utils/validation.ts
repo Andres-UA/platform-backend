@@ -33,7 +33,8 @@ export function serviceValidation(data: any) {
       .min(6)
       .required(),
     description: Joi.string().min(2),
-    model_schema: Joi.array().required()
+    participants: Joi.array().required(),
+    assets: Joi.array().required()
   };
   return Joi.validate(data, schema);
 }

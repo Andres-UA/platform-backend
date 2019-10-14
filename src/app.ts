@@ -7,7 +7,6 @@ import authRoutes from './routes/auth';
 import postRoutes from './routes/posts';
 import serviceRoutes from './routes/service';
 import bcServiceRoutes from './routes/bc.service';
-import router from './routes/posts';
 
 const app = express();
 

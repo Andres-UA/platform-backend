@@ -15,7 +15,8 @@ export async function store(req: Request, res: Response): Promise<Response> {
   const service = new Service({
     name: req.body.name,
     description: req.body.description,
-    model_schema: req.body.model_schema
+    participants: req.body.participants,
+    assets: req.body.assets
   });
 
   try {
