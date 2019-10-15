@@ -9,7 +9,8 @@ import {
   createModelTransaction,
   getModelTransaction,
   updateTransaction,
-  getModelsTransaction
+  getModelsTransaction,
+  getHistoryTransaction,
 } from '../utils/transaction';
 
 export async function config(req: Request, res: Response): Promise<Response> {
@@ -26,14 +27,14 @@ export async function store(req: Request, res: Response): Promise<Response> {
   if (!Types.ObjectId.isValid(serviceId)) {
     return res.status(400).json({
       success: false,
-      error: 'Identificador de servicio invalido.'
+      error: 'Identificador de servicio invalido.',
     });
   }
 
   if (typeComponent !== 'participant' && typeComponent !== 'asset') {
     return res.status(400).json({
       success: false,
-      message: 'Ruta no definida.'
+      message: 'Ruta no definida.',
     });
   }
 
@@ -53,37 +54,41 @@ export async function store(req: Request, res: Response): Promise<Response> {
         let obj: any = components[i];
         if (obj.name === nameComponent) {
           nameFound = true;
+          break;
         }
       }
 
-      if (!nameFound) {
+      if (nameFound === false) {
         return res.status(400).json({
           success: false,
           message: `nombre del ${
             typeComponent === 'participant' ? 'particpante' : 'activo'
-          } no encontrado.`
+          } no encontrado.`,
         });
       }
 
       let fieldNames = [];
-      for (let i = 0; i < components.length; i++) {
-        let obj: any = components[i];
+      for (let j = 0; j < components.length; j++) {
+        let obj: any = components[j];
 
         if (obj.name === nameComponent) {
           for (let i = 0; i < obj.data.length; i++) {
             let input: any = obj.data[i];
             fieldNames.push(input.name);
-            if (input.required) {
+            if (input.isRequired) {
               if (!req.body.hasOwnProperty(input.name)) {
                 return res.status(400).json({
                   success: false,
-                  error: 'se esperaba ' + input.name
+                  error: 'se esperaba ' + input.name,
                 });
               }
             }
           }
+
+          break;
         }
       }
+
       let data: any = {};
       for (let key in fieldNames) {
         let name = fieldNames[key];
@@ -95,29 +100,29 @@ export async function store(req: Request, res: Response): Promise<Response> {
         typeComponent,
         nameComponent,
         uuid,
-        JSON.stringify(data)
+        JSON.stringify(data),
       );
       if (transaction.success) {
         return res.status(200).json({
           success: true,
-          message: 'Transaccion enviada, id:' + uuid
+          message: 'Transaccion enviada, id:' + uuid,
         });
       } else {
         return res.status(200).json({
           success: true,
-          message: 'Transaccion no enviada, error:' + transaction.message
+          message: 'Transaccion no enviada, error:' + transaction.message,
         });
       }
     } else {
       return res.status(400).json({
         success: false,
-        error: 'se esperaba ' + 'El servicio no existe.'
+        error: 'se esperaba ' + 'El servicio no existe.',
       });
     }
   } catch (err) {
     return res.status(400).json({
       success: false,
-      error: err.message
+      error: err.message,
     });
   }
 }
@@ -130,14 +135,14 @@ export async function index(req: Request, res: Response): Promise<Response> {
   if (!Types.ObjectId.isValid(serviceId)) {
     return res.status(400).json({
       success: false,
-      error: 'Identificador de servicio invalido.'
+      error: 'Identificador de servicio invalido.',
     });
   }
 
   if (typeComponent !== 'participant' && typeComponent !== 'asset') {
     return res.status(400).json({
       success: false,
-      message: 'Ruta no definida.'
+      message: 'Ruta no definida.',
     });
   }
 
@@ -165,7 +170,7 @@ export async function index(req: Request, res: Response): Promise<Response> {
           success: false,
           message: `nombre del ${
             typeComponent === 'participant' ? 'particpante' : 'activo'
-          } no encontrado.`
+          } no encontrado.`,
         });
       }
 
@@ -181,30 +186,30 @@ export async function index(req: Request, res: Response): Promise<Response> {
           ) {
             data.push({
               id: element.Key,
-              ...element.Record.data
+              ...element.Record.data,
             });
           }
         });
         return res.status(200).json({
           success: true,
-          data: data
+          data: data,
         });
       } else {
         return res.status(200).json({
           success: false,
-          error: transaction.message
+          error: transaction.message,
         });
       }
     } else {
       return res.status(400).json({
         success: false,
-        error: 'El servicio no existe.'
+        error: 'El servicio no existe.',
       });
     }
   } catch (err) {
     return res.status(400).json({
       success: false,
-      error: err
+      error: err,
     });
   }
 }
@@ -218,14 +223,14 @@ export async function show(req: Request, res: Response): Promise<Response> {
   if (!Types.ObjectId.isValid(serviceId)) {
     return res.status(400).json({
       success: false,
-      error: 'Identificador de servicio invalido.'
+      error: 'Identificador de servicio invalido.',
     });
   }
 
   if (typeComponent !== 'participant' && typeComponent !== 'asset') {
     return res.status(400).json({
       success: false,
-      message: 'Ruta no definida.'
+      message: 'Ruta no definida.',
     });
   }
 
@@ -253,7 +258,7 @@ export async function show(req: Request, res: Response): Promise<Response> {
           success: false,
           message: `nombre del ${
             typeComponent === 'participant' ? 'particpante' : 'activo'
-          } no encontrado.`
+          } no encontrado.`,
         });
       }
 
@@ -264,24 +269,24 @@ export async function show(req: Request, res: Response): Promise<Response> {
         const id = model.serviceId;
         return res.status(200).json({
           id,
-          ...data
+          ...data,
         });
       } else {
         return res.status(200).json({
           success: false,
-          error: transaction.error
+          error: transaction.error,
         });
       }
     } else {
       return res.status(400).json({
         success: false,
-        error: 'El servicio no existe.'
+        error: 'El servicio no existe.',
       });
     }
   } catch (err) {
     return res.status(400).json({
       success: false,
-      error: err.message
+      error: err.message,
     });
   }
 }
@@ -295,14 +300,14 @@ export async function update(req: Request, res: Response): Promise<Response> {
   if (!Types.ObjectId.isValid(serviceId)) {
     return res.status(400).json({
       success: false,
-      error: 'Identificador de servicio invalido.'
+      error: 'Identificador de servicio invalido.',
     });
   }
 
   if (typeComponent !== 'participant' && typeComponent !== 'asset') {
     return res.status(400).json({
       success: false,
-      message: 'Ruta no definida.'
+      message: 'Ruta no definida.',
     });
   }
 
@@ -330,7 +335,7 @@ export async function update(req: Request, res: Response): Promise<Response> {
           success: false,
           message: `nombre del ${
             typeComponent === 'participant' ? 'particpante' : 'activo'
-          } no encontrado.`
+          } no encontrado.`,
         });
       }
 
@@ -342,11 +347,11 @@ export async function update(req: Request, res: Response): Promise<Response> {
           for (let i = 0; i < obj.data.length; i++) {
             let input: any = obj.data[i];
             fieldNames.push(input.name);
-            if (input.required) {
+            if (input.isRequired) {
               if (!req.body.hasOwnProperty(input.name)) {
                 return res.status(400).json({
                   success: false,
-                  error: 'se esperaba ' + input.name
+                  error: 'se esperaba ' + input.name,
                 });
               }
             }
@@ -370,7 +375,91 @@ export async function update(req: Request, res: Response): Promise<Response> {
   } catch (err) {
     return res.status(400).json({
       success: false,
-      error: err.message
+      error: err.message,
+    });
+  }
+}
+
+export async function history(req: Request, res: Response): Promise<Response> {
+  const serviceId = req.params.id_service;
+  const typeComponent = req.params.type_component;
+  const nameComponent = req.params.name_component;
+  const documentId = req.params.id_model;
+
+  if (!Types.ObjectId.isValid(serviceId)) {
+    return res.status(400).json({
+      success: false,
+      error: 'Identificador de servicio invalido.',
+    });
+  }
+
+  if (typeComponent !== 'participant' && typeComponent !== 'asset') {
+    return res.status(400).json({
+      success: false,
+      message: 'Ruta no definida.',
+    });
+  }
+
+  try {
+    const service = await Service.findOne({ _id: serviceId });
+    if (service !== null) {
+      let nameFound = false;
+
+      let components = null;
+      if (typeComponent === 'participant') {
+        components = service.participants;
+      } else {
+        components = service.assets;
+      }
+
+      for (let i = 0; i < components.length; i++) {
+        let obj: any = components[i];
+        if (obj.name === nameComponent) {
+          nameFound = true;
+        }
+      }
+
+      if (!nameFound) {
+        return res.status(400).json({
+          success: false,
+          message: `nombre del ${
+            typeComponent === 'participant' ? 'particpante' : 'activo'
+          } no encontrado.`,
+        });
+      }
+
+      let transaction: any = await getHistoryTransaction(documentId);
+      if (transaction.success) {
+        const model: [any] = JSON.parse(transaction.model);
+        let data: [any] = [{}];
+        data.pop();
+        model.map(element => {
+          data.push({
+            id: element.Key,
+            ...element.Record.data,
+            timestamp: new Date(element.timestamp.seconds.low),
+          });
+        });
+        return res.status(200).json({
+          success: true,
+          data: data,
+        });
+      } else {
+        return res.status(200).json({
+          success: false,
+          error: transaction.message,
+        });
+      }
+    } else {
+      return res.status(400).json({
+        success: false,
+        error: 'El servicio no existe.',
+      });
+    }
+  } catch (err) {
+    return res.status(400).json({
+      success: false,
+      error: err,
     });
   }
 }

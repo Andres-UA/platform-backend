@@ -8,15 +8,15 @@ const ccpPath = path.resolve(
   '..',
   'platform-network',
   'first-network',
-  'connection-org1.json'
+  'connection-org1.json',
 );
 
 export async function createModelTransaction(
   serviceId: string,
-  documentId: string,
   typeComponent: string,
   nameComponent: string,
-  data: string
+  documentId: string,
+  data: string,
 ) {
   try {
     const walletPath = path.join(process.cwd(), 'wallet');
@@ -32,7 +32,7 @@ export async function createModelTransaction(
     await gateway.connect(ccpPath, {
       wallet,
       identity: 'user1',
-      discovery: { enabled: true, asLocalhost: true }
+      discovery: { enabled: true, asLocalhost: true },
     });
 
     const network = await gateway.getNetwork('mychannel');
@@ -44,7 +44,7 @@ export async function createModelTransaction(
       typeComponent,
       nameComponent,
       documentId,
-      data
+      data,
     );
 
     await gateway.disconnect();
@@ -52,7 +52,7 @@ export async function createModelTransaction(
   } catch (error) {
     return {
       success: false,
-      message: `Failed to submit transaction: ${error}`
+      message: `Failed to submit transaction: ${error}`,
     };
   }
 }
@@ -72,7 +72,7 @@ export async function getModelTransaction(docId: string) {
     await gateway.connect(ccpPath, {
       wallet,
       identity: 'user1',
-      discovery: { enabled: true, asLocalhost: true }
+      discovery: { enabled: true, asLocalhost: true },
     });
 
     const network = await gateway.getNetwork('mychannel');
@@ -81,12 +81,12 @@ export async function getModelTransaction(docId: string) {
     const result = await contract.evaluateTransaction('getModelByID', docId);
     return {
       success: true,
-      model: result.toString()
+      model: result.toString(),
     };
   } catch (error) {
     return {
       success: false,
-      error: `Failed to evaluate transaction: ${error.message}`
+      error: `Failed to evaluate transaction: ${error.message}`,
     };
   }
 }
@@ -106,7 +106,7 @@ export async function getModelsTransaction(serviceId: string) {
     await gateway.connect(ccpPath, {
       wallet,
       identity: 'user1',
-      discovery: { enabled: true, asLocalhost: true }
+      discovery: { enabled: true, asLocalhost: true },
     });
 
     const network = await gateway.getNetwork('mychannel');
@@ -116,12 +116,47 @@ export async function getModelsTransaction(serviceId: string) {
     console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
     return {
       success: true,
-      model: result.toString()
+      model: result.toString(),
     };
   } catch (error) {
     return {
       success: false,
-      error: `Failed to evaluate transaction: ${error.message}`
+      error: `Failed to evaluate transaction: ${error.message}`,
+    };
+  }
+}
+
+export async function getHistoryTransaction(documentId: string) {
+  try {
+    const walletPath = path.join(process.cwd(), 'wallet');
+    const wallet = new FileSystemWallet(walletPath);
+
+    const userExists = await wallet.exists('user1');
+    if (!userExists) {
+      console.log('An identity for the user "user1" does not exist in the wallet');
+      return;
+    }
+
+    const gateway = new Gateway();
+    await gateway.connect(ccpPath, {
+      wallet,
+      identity: 'user1',
+      discovery: { enabled: true, asLocalhost: true },
+    });
+
+    const network = await gateway.getNetwork('mychannel');
+    const contract = network.getContract('fabcar');
+
+    const result = await contract.evaluateTransaction('getHistory', documentId);
+    console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
+    return {
+      success: true,
+      model: result.toString(),
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: `Failed to evaluate transaction: ${error.message}`,
     };
   }
 }
@@ -141,7 +176,7 @@ export async function updateTransaction(documentId: string, data: string) {
     await gateway.connect(ccpPath, {
       wallet,
       identity: 'user1',
-      discovery: { enabled: true, asLocalhost: true }
+      discovery: { enabled: true, asLocalhost: true },
     });
 
     const network = await gateway.getNetwork('mychannel');
@@ -154,7 +189,7 @@ export async function updateTransaction(documentId: string, data: string) {
   } catch (error) {
     return {
       success: false,
-      message: `Failed to submit transaction: ${error}`
+      message: `Failed to submit transaction: ${error}`,
     };
   }
 }
