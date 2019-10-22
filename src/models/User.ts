@@ -8,9 +8,22 @@ const userSchema = new Schema(
       min: 6,
       max: 255
     },
+    identification: {
+      type: String,
+      required: true,
+      max: 255,
+      min: 6
+    },
     email: {
       type: String,
       required: true,
+      max: 255,
+      min: 6
+    },
+    type: {
+      type: String,
+      required: true,
+      default: 'user',
       max: 255,
       min: 6
     },
@@ -26,8 +39,10 @@ const userSchema = new Schema(
 
 interface IUser extends Document {
   name: string;
+  identification: string;
   email: string;
   password: string;
+  type: string;
   date: Date;
 }
 

@@ -5,8 +5,13 @@ export function registerValidation(data: any) {
     name: Joi.string()
       .min(6)
       .required(),
+    identification: Joi.string()
+      .min(6)
+      .required(),
     email: Joi.string()
       .min(6)
+      .required(),
+    type: Joi.string()
       .required(),
     password: Joi.string()
       .min(6)
@@ -17,7 +22,7 @@ export function registerValidation(data: any) {
 
 export function loginValidation(data: any) {
   const schema = {
-    email: Joi.string()
+    identification: Joi.string()
       .min(6)
       .required(),
     password: Joi.string()

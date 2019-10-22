@@ -7,6 +7,7 @@ import authRoutes from './routes/auth';
 import postRoutes from './routes/posts';
 import serviceRoutes from './routes/service';
 import bcServiceRoutes from './routes/bc.service';
+import userRoutes from './routes/user';
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(cors());
 
 // routes
 app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
 app.use('/api/post', postRoutes);
 app.use('/api/service', serviceRoutes);
 app.use('/service', bcServiceRoutes);
