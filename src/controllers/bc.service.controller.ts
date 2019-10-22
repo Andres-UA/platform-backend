@@ -463,3 +463,30 @@ export async function history(req: Request, res: Response): Promise<Response> {
     });
   }
 }
+
+export async function testFunc(req: Request, res: Response): Promise<Response> {
+  const documentId = req.params.id_model;
+
+  const parametroModificado = req.params.atr_mod;
+
+  const parametroRequerido = req.params.atr_req;
+
+  const valor = req.params.atr_valor;
+
+  let transaction: any = await getModelTransaction(documentId);
+
+  const model: any = JSON.parse(transaction.model);
+
+  const data: any = model.data;
+  
+  if (+data[parametroModificado] <= +parametroRequerido) {
+    data[parametroModificado] = valor;
+  }
+
+  let transaction2: any = await updateTransaction(documentId, JSON.stringify(data));
+  if (transaction2.success) {
+    return res.status(200).send('Transaccion enviada, id:');
+  } else {
+    return res.status(200).send('Transaccion no enviada, error: ' + transaction.message);
+  }
+}
