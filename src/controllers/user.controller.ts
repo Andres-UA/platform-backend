@@ -39,7 +39,7 @@ export async function store(req: Request, res: Response): Promise<Response> {
     identification: req.body.identification,
     email: req.body.email,
     type: req.body.type,
-    password: hashedPassword
+    password: hashedPassword,
   });
 
   try {
@@ -51,24 +51,44 @@ export async function store(req: Request, res: Response): Promise<Response> {
   }
 }
 
+export async function getUser(req: Request, res: Response): Promise<Response> {
+  console.log(req.user);
+
+  const user = await User.findById(req.user._id);
+  if (user) {
+    return res.json({
+      success: true,
+      user: {
+        user: user._id,
+        type: user.type,
+        name: user.name,
+        identification: user.identification,
+        email: user.email,
+      }
+    });
+  }
+
+  return res.status(200).json({ success: false, error: 'User not found' });
+}
+
 export async function login(req: Request, res: Response): Promise<Response> {
   const { error } = loginValidation(req.body);
   if (error) {
     const message = error.details[0].message;
-    return res.status(400).json({success: false, message});
+    return res.status(400).json({ success: false, message });
   }
 
   const user = await User.findOne({ identification: req.body.identification });
   if (!user) {
-    return res.status(400).json({success: false, message: 'Email is not found'});
+    return res.status(400).json({ success: false, message: 'Email is not found' });
   }
 
   const validPassword = await bcrypt.compare(req.body.password, user.password);
   if (!validPassword) {
-    return res.status(400).json({success: false, message: 'Invalid password'}); 
+    return res.status(400).json({ success: false, message: 'Invalid password' });
   }
 
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET || '');
 
-  return res.status(200).json({ success: true, user: user._id, token });
+  return res.status(200).json({ success: true, token });
 }

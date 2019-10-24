@@ -15,7 +15,10 @@ export default function auth(req: Request, res: Response, next: NextFunction) {
 
     next();
   } catch (err) {
-    return res.status(400).send('Invalid token');
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid token'
+    });
   }
 }
 
